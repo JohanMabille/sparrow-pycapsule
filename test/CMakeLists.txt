@@ -62,3 +62,25 @@ endif()
 set_target_properties(${test_target} PROPERTIES
     FOLDER tests
 )
+
+add_custom_target(run_tests
+    COMMAND ${test_target}
+    DEPENDS
+    ${test_target}
+    COMMENT "Running tests"
+    USES_TERMINAL
+)
+
+set_target_properties(run_tests PROPERTIES FOLDER "Tests utilities")
+
+set(JUNIT_REPORT_FILE_DOCTEST ${CMAKE_CURRENT_BINARY_DIR}/test_sparrow-pycapsule_lib_report_doctest.xml)
+
+add_custom_target(run_tests_with_junit_report
+    COMMAND ${test_target} --reporters=junit --out=${JUNIT_REPORT_FILE_DOCTEST} --no-path-filenames=true
+    DEPENDS
+    ${test_target}
+    COMMENT "Running tests with JUnit reports saved to: ${JUNIT_REPORT_FILE_DOCTEST}"
+    USES_TERMINAL
+)
+
+set_target_properties(run_tests_with_junit_report PROPERTIES FOLDER "Tests utilities")

@@ -56,7 +56,7 @@ if(NOT TARGET sparrow::sparrow)
     add_library(sparrow::sparrow ALIAS sparrow)
 endif()
 
-if(BUILD_TESTS)
+if(SPARROW_PYCAPSULE_BUILD_TESTS)
     find_package_or_fetch(
         PACKAGE_NAME doctest
         GIT_REPOSITORY https://github.com/doctest/doctest.git
@@ -65,4 +65,3 @@ if(BUILD_TESTS)
 endif()
 
 find_package(Python REQUIRED COMPONENTS Development)
-

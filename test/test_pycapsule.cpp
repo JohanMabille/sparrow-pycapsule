@@ -78,7 +78,7 @@ namespace sparrow::pycapsule
 
                 const char* name = PyCapsule_GetName(schema_capsule);
                 REQUIRE_NE(name, nullptr);
-                CHECK_EQ(std::string(name),"arrow_schema");
+                CHECK_EQ(std::string(name), "arrow_schema");
 
                 // Verify we can get the pointer
                 ArrowSchema* schema = static_cast<ArrowSchema*>(
@@ -95,7 +95,7 @@ namespace sparrow::pycapsule
                 auto arr = make_test_array();
                 PyObject* schema_capsule = ExportArrowSchemaPyCapsule(arr);
 
-                REQUIRE_NE(schema_capsule,nullptr);
+                REQUIRE_NE(schema_capsule, nullptr);
 
                 // Get the schema pointer before destruction
                 ArrowSchema* schema = static_cast<ArrowSchema*>(

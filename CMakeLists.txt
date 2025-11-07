@@ -80,8 +80,8 @@ message(STATUS "sparrow pycapsule binary version: v${SPARROW_PYCAPSULE_BINARY_VE
 # Build options
 # =============
 
-option(BUILD_TESTS "Build sparrow test suite" OFF)
-message(STATUS "🔧 Build tests: ${BUILD_TESTS}")
+option(SPARROW_PYCAPSULE_BUILD_TESTS "Build sparrow test suite" OFF)
+message(STATUS "🔧 Build tests: ${SPARROW_PYCAPSULE_BUILD_TESTS}")
 option(BUILD_DOCS "Build sparrow documentation" OFF)
 message(STATUS "🔧 Build docs: ${BUILD_DOCS}")
 
@@ -246,7 +246,7 @@ endif()
 
 # Tests
 # =====
-if(BUILD_TESTS)
+if(SPARROW_PYCAPSULE_BUILD_TESTS)
     add_subdirectory(test)
 endif()
 
