@@ -267,14 +267,10 @@ export(EXPORT ${PROJECT_NAME}-targets
     NAMESPACE sparrow::)
 
 # Install headers
-install(DIRECTORY ${SPARROW_PYCAPSULE_INCLUDE_DIR}/sparrow
+install(DIRECTORY ${SPARROW_PYCAPSULE_INCLUDE_DIR}/sparrow-pycapsule
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     PATTERN ".clang-*" EXCLUDE
     PATTERN "README.md" EXCLUDE)
-
-install(FILES ${SPARROW_PYCAPSULE_INCLUDE_DIR}/sparrow.hpp
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
 # Install CMake configuration files
 set(SPARROW_CMAKECONFIG_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/cmake/${PROJECT_NAME}" CACHE
     STRING "install path for sparrowConfig.cmake")
