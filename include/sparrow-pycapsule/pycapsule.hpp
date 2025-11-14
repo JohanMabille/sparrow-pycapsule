@@ -24,7 +24,7 @@ namespace sparrow::pycapsule
      *
      * @param capsule The PyCapsule containing an ArrowSchema pointer
      */
-    SPARROW_PYCAPSULE_API void ReleaseArrowSchemaPyCapsule(PyObject* capsule);
+    SPARROW_PYCAPSULE_API void release_arrow_schema_pycapsule(PyObject* capsule);
 
     /**
      * @brief Exports a sparrow array's schema to a PyCapsule.
@@ -35,7 +35,7 @@ namespace sparrow::pycapsule
      * @param arr The sparrow array to export (will be moved from)
      * @return A new PyCapsule containing the ArrowSchema, or nullptr on error
      */
-    SPARROW_PYCAPSULE_API PyObject* ExportArrowSchemaPyCapsule(array& arr);
+    SPARROW_PYCAPSULE_API PyObject* export_arrow_schema_pycapsule(array& arr);
 
     /**
      * @brief Retrieves the ArrowSchema pointer from a PyCapsule.
@@ -43,7 +43,7 @@ namespace sparrow::pycapsule
      * @param capsule The PyCapsule to extract the schema from
      * @return Pointer to the ArrowSchema, or nullptr if the capsule is invalid (sets Python exception)
      */
-    SPARROW_PYCAPSULE_API ArrowSchema* GetArrowSchemaPyCapsule(PyObject* capsule);
+    SPARROW_PYCAPSULE_API ArrowSchema* get_arrow_schema_pycapsule(PyObject* capsule);
 
     /**
      * @brief Capsule destructor for ArrowArray PyCapsules.
@@ -53,7 +53,7 @@ namespace sparrow::pycapsule
      *
      * @param capsule The PyCapsule containing an ArrowArray pointer
      */
-    SPARROW_PYCAPSULE_API void ReleaseArrowArrayPyCapsule(PyObject* capsule);
+    SPARROW_PYCAPSULE_API void release_arrow_array_pycapsule(PyObject* capsule);
 
     /**
      * @brief Exports a sparrow array's data to a PyCapsule.
@@ -64,7 +64,7 @@ namespace sparrow::pycapsule
      * @param arr The sparrow array to export (will be moved from)
      * @return A new PyCapsule containing the ArrowArray, or nullptr on error
      */
-    SPARROW_PYCAPSULE_API PyObject* ExportArrowArrayPyCapsule(array& arr);
+    SPARROW_PYCAPSULE_API PyObject* export_arrow_array_pycapsule(array& arr);
 
     /**
      * @brief Retrieves the ArrowArray pointer from a PyCapsule.
@@ -72,7 +72,7 @@ namespace sparrow::pycapsule
      * @param capsule The PyCapsule to extract the array from
      * @return Pointer to the ArrowArray, or nullptr if the capsule is invalid (sets Python exception)
      */
-    SPARROW_PYCAPSULE_API ArrowArray* GetArrowArrayPyCapsule(PyObject* capsule);
+    SPARROW_PYCAPSULE_API ArrowArray* get_arrow_array_pycapsule(PyObject* capsule);
 
     /**
      * @brief Imports a sparrow array from schema and array PyCapsules.

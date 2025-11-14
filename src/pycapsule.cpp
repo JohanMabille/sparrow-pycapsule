@@ -5,7 +5,6 @@
 #include <sparrow/array.hpp>
 #include <sparrow/c_interface.hpp>
 
-
 namespace sparrow::pycapsule
 {
     namespace
@@ -15,9 +14,17 @@ namespace sparrow::pycapsule
         constexpr std::string_view arrow_array_str = "arrow_array";
     }
 
-    void ReleaseArrowSchemaPyCapsule(PyObject* capsule)
+    void release_arrow_schema_pycapsule(PyObject* capsule)
     {
+        if (capsule == nullptr)
+        {
+            return;
+        }
         auto schema = static_cast<ArrowSchema*>(PyCapsule_GetPointer(capsule, arrow_schema_str.data()));
+        if (schema == nullptr)
+        {
+            return;
+        }
         if (schema->release != nullptr)
         {
             schema->release(schema);
@@ -25,23 +32,38 @@ namespace sparrow::pycapsule
         delete schema;
     }
 
-    PyObject* ExportArrowSchemaPyCapsule(array& arr)
+    PyObject* export_arrow_schema_pycapsule(array& arr)
     {
         // Allocate a new ArrowSchema on the heap and extract (move) the schema
         ArrowSchema* arrow_schema_ptr = new ArrowSchema();
         *arrow_schema_ptr = extract_arrow_schema(std::move(arr));
 
-        return PyCapsule_New(arrow_schema_ptr, arrow_schema_str.data(), ReleaseArrowSchemaPyCapsule);
+        PyObject* capsule_ptr =  PyCapsule_New(arrow_schema_ptr, arrow_schema_str.data(), release_arrow_schema_pycapsule);
+        if(capsule_ptr == nullptr)
+        {
+            arrow_schema_ptr->release(arrow_schema_ptr);
+            delete arrow_schema_ptr;
+            return nullptr;
+        }
+        return capsule_ptr;
     }
 
-    ArrowSchema* GetArrowSchemaPyCapsule(PyObject* capsule)
+    ArrowSchema* get_arrow_schema_pycapsule(PyObject* capsule)
     {
         return static_cast<ArrowSchema*>(PyCapsule_GetPointer(capsule, arrow_schema_str.data()));
     }
 
-    void ReleaseArrowArrayPyCapsule(PyObject* capsule)
+    void release_arrow_array_pycapsule(PyObject* capsule)
     {
+        if (capsule == nullptr)
+        {
+            return;
+        }
         auto array = static_cast<ArrowArray*>(PyCapsule_GetPointer(capsule, arrow_array_str.data()));
+        if (array == nullptr)
+        {
+            return;
+        }
         if (array->release != nullptr)
         {
             array->release(array);
@@ -49,30 +71,37 @@ namespace sparrow::pycapsule
         delete array;
     }
 
-    PyObject* ExportArrowArrayPyCapsule(array& arr)
+    PyObject* export_arrow_array_pycapsule(array& arr)
     {
         // Allocate a new ArrowArray on the heap and extract (move) the array
         ArrowArray* arrow_array_ptr = new ArrowArray();
         *arrow_array_ptr = extract_arrow_array(std::move(arr));
 
-        return PyCapsule_New(arrow_array_ptr, arrow_array_str.data(), ReleaseArrowArrayPyCapsule);
+        PyObject* capsule_ptr =  PyCapsule_New(arrow_array_ptr, arrow_array_str.data(), release_arrow_array_pycapsule);
+        if(capsule_ptr == nullptr)
+        {
+            arrow_array_ptr->release(arrow_array_ptr);
+            delete arrow_array_ptr;
+            return nullptr;
+        }
+        return capsule_ptr;
     }
 
-    ArrowArray* GetArrowArrayPyCapsule(PyObject* capsule)
+    ArrowArray* get_arrow_array_pycapsule(PyObject* capsule)
     {
         return static_cast<ArrowArray*>(PyCapsule_GetPointer(capsule, arrow_array_str.data()));
     }
 
     array import_array_from_capsules(PyObject* schema_capsule, PyObject* array_capsule)
     {
-        ArrowSchema* schema = GetArrowSchemaPyCapsule(schema_capsule);
+        ArrowSchema* schema = get_arrow_schema_pycapsule(schema_capsule);
         if (schema == nullptr)
         {
             // Error already set by PyCapsule_GetPointer
             return array{};
         }
 
-        ArrowArray* arr = GetArrowArrayPyCapsule(array_capsule);
+        ArrowArray* arr = get_arrow_array_pycapsule(array_capsule);
         if (arr == nullptr)
         {
             // Error already set by PyCapsule_GetPointer
@@ -101,8 +130,8 @@ namespace sparrow::pycapsule
         ArrowSchema* schema_ptr = new ArrowSchema(std::move(arrow_schema));
         ArrowArray* array_ptr = new ArrowArray(std::move(arrow_array));
 
-        PyObject* schema_capsule = PyCapsule_New(schema_ptr, arrow_schema_str.data(), ReleaseArrowSchemaPyCapsule);
-        PyObject* array_capsule = PyCapsule_New(array_ptr, arrow_array_str.data(), ReleaseArrowArrayPyCapsule);
+        PyObject* schema_capsule = PyCapsule_New(schema_ptr, arrow_schema_str.data(), release_arrow_schema_pycapsule);
+        PyObject* array_capsule = PyCapsule_New(array_ptr, arrow_array_str.data(), release_arrow_array_pycapsule);
 
         return {schema_capsule, array_capsule};
     }

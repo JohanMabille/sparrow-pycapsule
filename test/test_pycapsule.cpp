@@ -70,8 +70,8 @@ namespace sparrow::pycapsule
             SUBCASE("creates_valid_capsule")
             {
                 auto arr = make_test_array();
-                // Note: ExportArrowSchemaPyCapsule moves from arr, so arr becomes invalid after
-                PyObject* schema_capsule = ExportArrowSchemaPyCapsule(arr);
+                // Note: export_arrow_schema_pycapsule moves from arr, so arr becomes invalid after
+                PyObject* schema_capsule = export_arrow_schema_pycapsule(arr);
 
                 REQUIRE_NE(schema_capsule, nullptr);
                 CHECK(PyCapsule_CheckExact(schema_capsule));
@@ -93,7 +93,7 @@ namespace sparrow::pycapsule
             SUBCASE("capsule_has_destructor")
             {
                 auto arr = make_test_array();
-                PyObject* schema_capsule = ExportArrowSchemaPyCapsule(arr);
+                PyObject* schema_capsule = export_arrow_schema_pycapsule(arr);
 
                 REQUIRE_NE(schema_capsule, nullptr);
 
@@ -119,7 +119,7 @@ namespace sparrow::pycapsule
             SUBCASE("creates_valid_capsule")
             {
                 auto arr = make_test_array();
-                PyObject* array_capsule = ExportArrowArrayPyCapsule(arr);
+                PyObject* array_capsule = export_arrow_array_pycapsule(arr);
 
                 REQUIRE_NE(array_capsule, nullptr);
                 CHECK(PyCapsule_CheckExact(array_capsule));
@@ -139,7 +139,7 @@ namespace sparrow::pycapsule
             SUBCASE("capsule_has_destructor")
             {
                 auto arr = make_test_array();
-                PyObject* array_capsule = ExportArrowArrayPyCapsule(arr);
+                PyObject* array_capsule = export_arrow_array_pycapsule(arr);
 
                 REQUIRE_NE(array_capsule, nullptr);
 
@@ -158,7 +158,7 @@ namespace sparrow::pycapsule
             SUBCASE("array_has_correct_length")
             {
                 auto arr = make_test_array();
-                PyObject* array_capsule = ExportArrowArrayPyCapsule(arr);
+                PyObject* array_capsule = export_arrow_array_pycapsule(arr);
 
                 REQUIRE_NE(array_capsule, nullptr);
 
@@ -177,9 +177,9 @@ namespace sparrow::pycapsule
             SUBCASE("returns_valid_schema_pointer")
             {
                 auto arr = make_test_array();
-                PyObject* schema_capsule = ExportArrowSchemaPyCapsule(arr);
+                PyObject* schema_capsule = export_arrow_schema_pycapsule(arr);
 
-                ArrowSchema* schema = GetArrowSchemaPyCapsule(schema_capsule);
+                ArrowSchema* schema = get_arrow_schema_pycapsule(schema_capsule);
                 CHECK_NE(schema, nullptr);
                 CHECK_NE(schema->release, nullptr);
 
@@ -192,7 +192,7 @@ namespace sparrow::pycapsule
                 int dummy = 42;
                 PyObject* wrong_capsule = PyCapsule_New(&dummy, "wrong_name", nullptr);
 
-                ArrowSchema* schema = GetArrowSchemaPyCapsule(wrong_capsule);
+                ArrowSchema* schema = get_arrow_schema_pycapsule(wrong_capsule);
                 CHECK_EQ(schema, nullptr);
                 CHECK_NE(PyErr_Occurred(), nullptr);
                 PyErr_Clear();
@@ -204,7 +204,7 @@ namespace sparrow::pycapsule
             {
                 PyObject* not_capsule = PyLong_FromLong(42);
 
-                ArrowSchema* schema = GetArrowSchemaPyCapsule(not_capsule);
+                ArrowSchema* schema = get_arrow_schema_pycapsule(not_capsule);
                 CHECK_EQ(schema, nullptr);
                 CHECK_NE(PyErr_Occurred(), nullptr);
                 PyErr_Clear();
@@ -220,9 +220,9 @@ namespace sparrow::pycapsule
             SUBCASE("returns_valid_array_pointer")
             {
                 auto arr = make_test_array();
-                PyObject* array_capsule = ExportArrowArrayPyCapsule(arr);
+                PyObject* array_capsule = export_arrow_array_pycapsule(arr);
 
-                ArrowArray* array = GetArrowArrayPyCapsule(array_capsule);
+                ArrowArray* array = get_arrow_array_pycapsule(array_capsule);
                 CHECK_NE(array, nullptr);
                 CHECK_NE(array->release, nullptr);
 
@@ -235,7 +235,7 @@ namespace sparrow::pycapsule
                 int dummy = 42;
                 PyObject* wrong_capsule = PyCapsule_New(&dummy, "wrong_name", nullptr);
 
-                ArrowArray* array = GetArrowArrayPyCapsule(wrong_capsule);
+                ArrowArray* array = get_arrow_array_pycapsule(wrong_capsule);
                 CHECK_EQ(array, nullptr);
                 CHECK_NE(PyErr_Occurred(), nullptr);
                 PyErr_Clear();
@@ -247,7 +247,7 @@ namespace sparrow::pycapsule
             {
                 PyObject* not_capsule = PyLong_FromLong(42);
 
-                ArrowArray* array = GetArrowArrayPyCapsule(not_capsule);
+                ArrowArray* array = get_arrow_array_pycapsule(not_capsule);
                 CHECK_EQ(array, nullptr);
                 CHECK_NE(PyErr_Occurred(), nullptr);
                 PyErr_Clear();
@@ -283,8 +283,8 @@ namespace sparrow::pycapsule
                 auto arr = make_test_array();
                 auto [schema_capsule, array_capsule] = export_array_to_capsules(arr);
 
-                ArrowSchema* schema = GetArrowSchemaPyCapsule(schema_capsule);
-                ArrowArray* array = GetArrowArrayPyCapsule(array_capsule);
+                ArrowSchema* schema = get_arrow_schema_pycapsule(schema_capsule);
+                ArrowArray* array = get_arrow_array_pycapsule(array_capsule);
 
                 REQUIRE_NE(schema, nullptr);
                 REQUIRE_NE(array, nullptr);
@@ -408,7 +408,7 @@ namespace sparrow::pycapsule
                 ArrowSchema* schema = new ArrowSchema();
                 schema->release = nullptr;
 
-                PyObject* capsule = PyCapsule_New(schema, "arrow_schema", ReleaseArrowSchemaPyCapsule);
+                PyObject* capsule = PyCapsule_New(schema, "arrow_schema", release_arrow_schema_pycapsule);
 
                 // This should not crash
                 Py_DECREF(capsule);
@@ -425,7 +425,7 @@ namespace sparrow::pycapsule
                 ArrowArray* array = new ArrowArray();
                 array->release = nullptr;
 
-                PyObject* capsule = PyCapsule_New(array, "arrow_array", ReleaseArrowArrayPyCapsule);
+                PyObject* capsule = PyCapsule_New(array, "arrow_array", release_arrow_array_pycapsule);
 
                 // This should not crash
                 Py_DECREF(capsule);
@@ -440,8 +440,8 @@ namespace sparrow::pycapsule
             {
                 // Create capsules but never consume them
                 auto arr = make_test_array();
-                PyObject* schema_capsule = ExportArrowSchemaPyCapsule(arr);
-                PyObject* array_capsule = ExportArrowArrayPyCapsule(arr);
+                PyObject* schema_capsule = export_arrow_schema_pycapsule(arr);
+                PyObject* array_capsule = export_arrow_array_pycapsule(arr);
 
                 // Just decref without consuming - destructors should clean up
                 Py_DECREF(schema_capsule);

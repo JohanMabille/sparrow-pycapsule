@@ -42,7 +42,7 @@ if(CMAKE_CXX_COMPILER_LAUNCHER)
     message(STATUS "Using C++ compiler launcher: ${CMAKE_CXX_COMPILER_LAUNCHER}")
 endif()
 
-# Versionning
+# Versioning
 # ===========
 
 set(sparrow_pycapsule_version_path "${SPARROW_PYCAPSULE_INCLUDE_DIR}/sparrow-pycapsule/config/sparrow_pycapsule_version.hpp")
@@ -61,7 +61,7 @@ set(CMAKE_PROJECT_VERSION
 message(STATUS "Building sparrow v${CMAKE_PROJECT_VERSION}")
 
 # Binary version
-# See the following URL for explanations about the binary versionning
+# See the following URL for explanations about the binary versioning
 # https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html#Updating-version-info
 file(STRINGS "${sparrow_pycapsule_version_path}" sparrow_pycapsule_version_defines
     REGEX "constexpr int SPARROW_PYCAPSULE_BINARY_(CURRENT|REVISION|AGE)")
